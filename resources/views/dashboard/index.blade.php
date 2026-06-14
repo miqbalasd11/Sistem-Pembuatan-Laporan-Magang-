@@ -2,34 +2,142 @@
 
 @section('content')
 
+<style>
+.dashboard-header{
+    margin-bottom:30px;
+}
+
+.dashboard-title{
+    font-weight:700;
+    color:#1f2937;
+    margin-bottom:5px;
+}
+
+.dashboard-subtitle{
+    color:#6b7280;
+    font-size:14px;
+}
+
+.stat-card{
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    transition:.3s;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+}
+
+.stat-card .card-body{
+    padding:25px;
+}
+
+.stat-card h5{
+    font-size:14px;
+    font-weight:500;
+    opacity:.9;
+}
+
+.stat-card h2{
+    font-size:32px;
+    font-weight:700;
+    margin-top:10px;
+}
+
+.custom-card{
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.custom-card .card-header{
+    border:none;
+    padding:16px 20px;
+    font-weight:600;
+}
+
+.table th{
+    font-weight:600;
+    background:#f8fafc;
+}
+
+.profile-table th{
+    color:#374151;
+    font-weight:600;
+}
+
+.profile-table td{
+    color:#6b7280;
+}
+
+.badge{
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:12px;
+}
+
+@media (max-width:768px){
+
+    .dashboard-title{
+        font-size:24px;
+    }
+
+    .stat-card .card-body{
+        padding:18px;
+    }
+
+    .stat-card h2{
+        font-size:24px;
+    }
+
+    .stat-card h5{
+        font-size:12px;
+    }
+
+    .custom-card .card-header{
+        font-size:14px;
+    }
+
+    .table{
+        font-size:13px;
+    }
+
+    .profile-table th{
+        width:120px !important;
+    }
+}
+</style>
+
 <div class="container-fluid">
 
-    <div class="row mb-4">
+    <!-- Header -->
 
-        <div class="col-md-12">
-            <h2>Dashboard Magang</h2>
-            <p class="text-muted">
-                Selamat datang di Sistem Pencatatan Kegiatan Magang
-            </p>
-        </div>
+    <div class="dashboard-header">
+
+        <h2 class="dashboard-title">
+            Dashboard Magang
+        </h2>
+
+        <p class="dashboard-subtitle">
+            Selamat datang di Sistem Pencatatan Kegiatan Magang
+        </p>
 
     </div>
 
     <!-- Statistik -->
 
-    <div class="row">
+    <div class="row g-3 mb-4">
 
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
 
-            <div class="card text-white bg-primary shadow">
+            <div class="card stat-card bg-primary text-white shadow-sm">
 
                 <div class="card-body">
 
                     <h5>Total Kegiatan</h5>
 
-                    <h2>
-                        {{ $totalKegiatan }}
-                    </h2>
+                    <h2>{{ $totalKegiatan }}</h2>
 
                 </div>
 
@@ -37,17 +145,15 @@
 
         </div>
 
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
 
-            <div class="card text-white bg-success shadow">
+            <div class="card stat-card bg-success text-white shadow-sm">
 
                 <div class="card-body">
 
-                    <h5>Total Hari Magang</h5>
+                    <h5>Total Hari</h5>
 
-                    <h2>
-                        {{ $totalHariMagang }}
-                    </h2>
+                    <h2>{{ $totalHariMagang }}</h2>
 
                 </div>
 
@@ -55,17 +161,15 @@
 
         </div>
 
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
 
-            <div class="card text-white bg-info shadow">
+            <div class="card stat-card bg-info text-white shadow-sm">
 
                 <div class="card-body">
 
-                    <h5>Kegiatan Selesai</h5>
+                    <h5>Selesai</h5>
 
-                    <h2>
-                        {{ $totalSelesai }}
-                    </h2>
+                    <h2>{{ $totalSelesai }}</h2>
 
                 </div>
 
@@ -73,17 +177,15 @@
 
         </div>
 
-        <div class="col-md-3 mb-3">
+        <div class="col-6 col-md-3">
 
-            <div class="card text-white bg-warning shadow">
+            <div class="card stat-card bg-warning text-white shadow-sm">
 
                 <div class="card-body">
 
-                    <h5>Kegiatan Pending</h5>
+                    <h5>Pending</h5>
 
-                    <h2>
-                        {{ $totalPending }}
-                    </h2>
+                    <h2>{{ $totalPending }}</h2>
 
                 </div>
 
@@ -93,116 +195,105 @@
 
     </div>
 
-    <!-- Profil Magang -->
+    <!-- Profil -->
 
-    <div class="row">
+    <div class="card custom-card shadow-sm mb-4">
 
-        <div class="col-md-12">
+        <div class="card-header bg-dark text-white">
 
-            <div class="card shadow mb-4">
+            Profil Magang
 
-                <div class="card-header bg-dark text-white">
+        </div>
 
-                    Profil Magang
+        <div class="card-body">
 
-                </div>
+            @if($profil)
 
-                <div class="card-body">
+            <div class="row">
 
-                    @if($profil)
+                <div class="col-lg-6">
 
-                        <div class="row">
+                    <table class="table profile-table">
 
-                            <div class="col-md-6">
+                        <tr>
+                            <th width="180">Nama</th>
+                            <td>{{ $profil->nama_mahasiswa }}</td>
+                        </tr>
 
-                                <table class="table">
+                        <tr>
+                            <th>NIM</th>
+                            <td>{{ $profil->nim }}</td>
+                        </tr>
 
-                                    <tr>
-                                        <th width="200">Nama</th>
-                                        <td>{{ $profil->nama_mahasiswa }}</td>
-                                    </tr>
+                        <tr>
+                            <th>Program Studi</th>
+                            <td>{{ $profil->program_studi }}</td>
+                        </tr>
 
-                                    <tr>
-                                        <th>NIM</th>
-                                        <td>{{ $profil->nim }}</td>
-                                    </tr>
+                        <tr>
+                            <th>Universitas</th>
+                            <td>{{ $profil->universitas }}</td>
+                        </tr>
 
-                                    <tr>
-                                        <th>Program Studi</th>
-                                        <td>{{ $profil->program_studi }}</td>
-                                    </tr>
 
-                                    <tr>
-                                        <th>Universitas</th>
-                                        <td>{{ $profil->universitas }}</td>
-                                    </tr>
 
-                                </table>
+                        <tr>
+                            <th width="180">Perusahaan</th>
+                            <td>{{ $profil->perusahaan }}</td>
+                        </tr>
 
-                            </div>
+                        <tr>
+                            <th>Pembimbing</th>
+                            <td>{{ $profil->pembimbing }}</td>
+                        </tr>
 
-                            <div class="col-md-6">
+                        <tr>
+                            <th>Tanggal Mulai</th>
+                            <td>
+                                {{ \Carbon\Carbon::parse($profil->tanggal_mulai)->translatedFormat('d F Y') }}
+                            </td>
+                        </tr>
 
-                                <table class="table">
+                        <tr>
+                            <th>Tanggal Selesai</th>
+                            <td>
+                                {{ \Carbon\Carbon::parse($profil->tanggal_selesai)->translatedFormat('d F Y') }}
+                            </td>
+                        </tr>
 
-                                    <tr>
-                                        <th width="200">Perusahaan</th>
-                                        <td>{{ $profil->perusahaan }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Pembimbing</th>
-                                        <td>{{ $profil->pembimbing }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Tanggal Mulai</th>
-                                        <td>
-                                            {{ \Carbon\Carbon::parse($profil->tanggal_mulai)->translatedFormat('d F Y') }}
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Tanggal Selesai</th>
-                                        <td>
-                                            {{ \Carbon\Carbon::parse($profil->tanggal_selesai)->translatedFormat('d F Y') }}
-                                        </td>
-                                    </tr>
-
-                                </table>
-
-                            </div>
-
-                        </div>
-
-                        <hr>
-
-                        <strong>Deskripsi Magang</strong>
-
-                        <p class="mt-2">
-                            {{ $profil->deskripsi }}
-                        </p>
-
-                    @else
-
-                        <div class="alert alert-warning">
-
-                            Profil magang belum diisi.
-
-                            <a href="/profil/create"
-                               class="btn btn-sm btn-primary ms-2">
-
-                                Isi Profil
-
-                            </a>
-
-                        </div>
-
-                    @endif
+                    </table>
 
                 </div>
 
             </div>
+
+            <hr>
+
+            <h6 class="fw-bold">
+                Deskripsi Magang
+            </h6>
+
+            <p class="text-muted mb-0">
+                {{ $profil->deskripsi }}
+            </p>
+
+            @else
+
+            <div class="alert alert-warning d-flex justify-content-between align-items-center">
+
+                <span>
+                    Profil magang belum diisi
+                </span>
+
+                <a href="/profil/create"
+                   class="btn btn-primary btn-sm">
+
+                    Isi Profil
+                </a>
+
+            </div>
+
+            @endif
 
         </div>
 
@@ -210,103 +301,92 @@
 
     <!-- Kegiatan Terbaru -->
 
-    <div class="row">
+    <div class="card custom-card shadow-sm">
 
-        <div class="col-md-12">
+        <div class="card-header bg-primary text-white">
 
-            <div class="card shadow">
+            Kegiatan Terbaru
 
-                <div class="card-header bg-primary text-white">
+        </div>
 
-                    Kegiatan Terbaru
+        <div class="card-body">
 
-                </div>
+            <div class="table-responsive">
 
-                <div class="card-body">
+                <table class="table table-hover align-middle">
 
-                    <div class="table-responsive">
+                    <thead>
 
-                        <table class="table table-bordered table-striped">
+                        <tr>
 
-                            <thead>
+                            <th width="60">No</th>
+                            <th>Tanggal</th>
+                            <th>Judul Kegiatan</th>
+                            <th>Status</th>
 
-                                <tr>
+                        </tr>
 
-                                    <th width="60">No</th>
-                                    <th>Tanggal</th>
-                                    <th>Judul Kegiatan</th>
-                                    <th>Status</th>
+                    </thead>
 
-                                </tr>
+                    <tbody>
 
-                            </thead>
+                        @forelse($kegiatanTerbaru as $item)
 
-                            <tbody>
+                        <tr>
 
-                                @forelse($kegiatanTerbaru as $item)
+                            <td>{{ $loop->iteration }}</td>
 
-                                <tr>
+                            <td>
+                                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+                            </td>
 
-                                    <td>
-                                        {{ $loop->iteration }}
-                                    </td>
+                            <td>
+                                {{ $item->judul_kegiatan }}
+                            </td>
 
-                                    <td>
-                                    {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
-                                    </td>
+                            <td>
 
-                                    <td>
-                                        {{ $item->judul_kegiatan }}
-                                    </td>
+                                @if($item->status == 'Selesai')
 
-                                    <td>
+                                    <span class="badge bg-success">
+                                        Selesai
+                                    </span>
 
-                                        @if($item->status == 'Selesai')
+                                @elseif($item->status == 'Proses')
 
-                                            <span class="badge bg-success">
-                                                Selesai
-                                            </span>
+                                    <span class="badge bg-primary">
+                                        Proses
+                                    </span>
 
-                                        @elseif($item->status == 'Proses')
+                                @else
 
-                                            <span class="badge bg-primary">
-                                                Proses
-                                            </span>
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
 
-                                        @else
+                                @endif
 
-                                            <span class="badge bg-warning">
-                                                Pending
-                                            </span>
+                            </td>
 
-                                        @endif
+                        </tr>
 
-                                    </td>
+                        @empty
 
-                                </tr>
+                        <tr>
 
-                                @empty
+                            <td colspan="4" class="text-center text-muted py-4">
 
-                                <tr>
+                                Belum ada kegiatan magang
 
-                                    <td colspan="4"
-                                        class="text-center">
+                            </td>
 
-                                        Belum ada kegiatan magang
+                        </tr>
 
-                                    </td>
+                        @endforelse
 
-                                </tr>
+                    </tbody>
 
-                                @endforelse
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
+                </table>
 
             </div>
 

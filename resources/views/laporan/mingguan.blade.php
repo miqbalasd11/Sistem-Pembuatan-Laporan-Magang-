@@ -2,118 +2,426 @@
 
 @section('content')
 
-<h2 class="mb-4">
-    Laporan Mingguan
-</h2>
+<style>
+.page-header{
+    margin-bottom:25px;
+}
 
-<div class="card mb-4">
-<div class="card-body">
+.page-title{
+    font-size:30px;
+    font-weight:700;
+    color:#1f2937;
+    margin-bottom:5px;
+}
 
-<form method="GET">
+.page-subtitle{
+    color:#6b7280;
+    font-size:14px;
+}
 
-<div class="row">
+.custom-card{
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+}
 
-<div class="col-md-4">
+.custom-card .card-body{
+    padding:25px;
+}
 
-<label>Tanggal Mulai</label>
+.filter-box{
+    background:#f8fafc;
+    padding:20px;
+    border-radius:15px;
+}
 
-<input
-type="date"
-name="mulai"
-class="form-control"
-value="{{ request('mulai') }}">
+.table-modern th{
+    background:#f8fafc;
+    border:none;
+    color:#374151;
+    font-weight:600;
+}
 
-</div>
+.table-modern td{
+    vertical-align:middle;
+    border-color:#eef2f7;
+}
 
-<div class="col-md-4">
+.report-header{
+    background:#f8fafc;
+    padding:15px 20px;
+    font-weight:600;
+    color:#111827;
+}
 
-<label>Tanggal Selesai</label>
+.mobile-report{
+    display:none;
+}
 
-<input
-type="date"
-name="selesai"
-class="form-control"
-value="{{ request('selesai') }}">
+.badge-status{
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+}
 
-</div>
+@media(max-width:768px){
 
-<div class="col-md-4 mt-4">
+    .page-title{
+        font-size:24px;
+    }
 
-<button class="btn btn-primary">
-Tampilkan
-</button>
+    .desktop-table{
+        display:none;
+    }
 
-</div>
+    .mobile-report{
+        display:block;
+    }
 
-</div>
+    .mobile-item{
+        background:#fff;
+        border-radius:15px;
+        padding:15px;
+        margin-bottom:15px;
+        box-shadow:0 2px 10px rgba(0,0,0,.05);
+    }
 
-</form>
+    .mobile-label{
+        font-size:12px;
+        color:#6b7280;
+        margin-bottom:4px;
+    }
 
-</div>
-</div>
+    .mobile-value{
+        font-size:14px;
+        font-weight:500;
+        margin-bottom:12px;
+    }
 
-@if($mulai && $selesai)
+    .btn{
+        width:100%;
+    }
+}
+</style>
 
-<a href="/laporan/mingguan/pdf?mulai={{ $mulai }}&selesai={{ $selesai }}"
-class="btn btn-danger mb-3">
+<div class="container-fluid">
 
-Cetak PDF
+    <!-- Header -->
 
-</a>
+    <div class="page-header">
 
-<table class="table table-bordered">
+        <h2 class="page-title">
+            Laporan Mingguan
+        </h2>
 
-<thead>
+        <p class="page-subtitle">
+            Laporan kegiatan magang berdasarkan rentang tanggal
+        </p>
 
-<tr align="center">
-<th>Tanggal</th>
-<th>Jam</th>
-<th>Kegiatan</th>
-<th>Status</th>
-</tr>
+    </div>
 
-</thead>
+    <!-- Filter -->
 
-<tbody>
+    <div class="card custom-card shadow-sm mb-4">
 
-@foreach($kegiatan as $item)
+        <div class="card-body">
 
-<tr>
+            <div class="filter-box">
 
-<td>
-{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
-</td>
+                <form method="GET">
 
-<td align="center">
+                    <div class="row g-3 align-items-end">
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Tanggal Mulai
+                            </label>
+
+                            <input
+                                type="date"
+                                name="mulai"
+                                class="form-control"
+                                value="{{ request('mulai') }}">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Tanggal Selesai
+                            </label>
+
+                            <input
+                                type="date"
+                                name="selesai"
+                                class="form-control"
+                                value="{{ request('selesai') }}">
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <button
+                                class="btn btn-primary">
+
+                                Tampilkan Laporan
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @if($mulai && $selesai)
+
+    <!-- Tombol PDF -->
+
+    <div class="mb-4">
+
+        <a href="/laporan/mingguan/pdf?mulai={{ $mulai }}&selesai={{ $selesai }}"
+           class="btn btn-danger">
+
+            Cetak PDF
+
+        </a>
+
+    </div>
+
+    <!-- Hasil Laporan -->
+
+    <div class="card custom-card shadow-sm">
+
+        <div class="report-header">
+
+            Periode :
+            {{ \Carbon\Carbon::parse($mulai)->translatedFormat('d F Y') }}
+            -
+            {{ \Carbon\Carbon::parse($selesai)->translatedFormat('d F Y') }}
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- Desktop -->
+
+            <div class="table-responsive desktop-table">
+
+                <table class="table table-modern">
+
+                    <thead>
+
+                        <tr>
+
+                            <th width="170">
+                                Tanggal
+                            </th>
+
+                            <th width="150">
+                                Jam
+                            </th>
+
+                            <th>
+                                Kegiatan
+                            </th>
+
+                            <th width="150">
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($kegiatan as $item)
+
+                        <tr>
+
+                            <td>
+
+                                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+
+                            </td>
+
+                            <td>
+
+                                {{ date('H:i', strtotime($item->jam_mulai)) }}
+                                -
+                                {{ date('H:i', strtotime($item->jam_selesai)) }}
+
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ $item->judul_kegiatan }}
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+
+                                    {{ $item->deskripsi_kegiatan }}
+
+                                </small>
+
+                            </td>
+
+                            <td>
+
+                                @if($item->status == 'Selesai')
+
+                                    <span class="badge bg-success badge-status">
+                                        Selesai
+                                    </span>
+
+                                @elseif($item->status == 'Sedang Dikerjakan')
+
+                                    <span class="badge bg-primary badge-status">
+                                        Sedang Dikerjakan
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-warning text-dark badge-status">
+                                        Belum Selesai
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="text-center py-4">
+
+                                Tidak ada kegiatan pada periode ini
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Mobile -->
+
+            <div class="mobile-report">
+
+                @forelse($kegiatan as $item)
+
+                <div class="mobile-item">
+
+                    <div class="mobile-label">
+                        Tanggal
+                    </div>
+
+                    <div class="mobile-value">
+
+                        {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+
+                    </div>
+
+                    <div class="mobile-label">
+                        Waktu
+                    </div>
+
+                    <div class="mobile-value">
+
                         {{ date('H:i', strtotime($item->jam_mulai)) }}
                         -
                         {{ date('H:i', strtotime($item->jam_selesai)) }}
-                    </td>
 
-<td>
+                    </div>
 
-<strong>
-{{ $item->judul_kegiatan }}
-</strong>
+                    <div class="mobile-label">
+                        Judul Kegiatan
+                    </div>
 
-<br>
+                    <div class="mobile-value">
 
-{{ $item->deskripsi_kegiatan }}
+                        {{ $item->judul_kegiatan }}
 
-</td>
+                    </div>
 
-<td>
-{{ $item->status }}
-</td>
+                    <div class="mobile-label">
+                        Deskripsi
+                    </div>
 
-</tr>
+                    <div class="mobile-value">
 
-@endforeach
+                        {{ $item->deskripsi_kegiatan }}
 
-</tbody>
+                    </div>
 
-</table>
+                    <div class="mobile-label">
+                        Status
+                    </div>
 
-@endif
+                    <div>
+
+                        @if($item->status == 'Selesai')
+
+                            <span class="badge bg-success">
+                                Selesai
+                            </span>
+
+                        @elseif($item->status == 'Sedang Dikerjakan')
+
+                            <span class="badge bg-primary">
+                                Sedang Dikerjakan
+                            </span>
+
+                        @else
+
+                            <span class="badge bg-warning text-dark">
+                                Belum Selesai
+                            </span>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <div class="alert alert-secondary">
+
+                    Tidak ada kegiatan pada periode ini.
+
+                </div>
+
+                @endforelse
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @endif
+
+</div>
 
 @endsection

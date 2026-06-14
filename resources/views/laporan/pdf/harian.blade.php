@@ -5,40 +5,113 @@
     <title>Laporan Harian Magang</title>
 
     <style>
+
+        @page{
+            
+            margin: 2.54cm;
+        }
+
         body{
-            font-family: DejaVu Sans, sans-serif;
-            font-size:12px;
+            font-family: "Times New Roman", Times, serif;
+            font-size:12pt;
+            line-height:1.5;
+            color:#000;
         }
 
-        h2,h3{
+        *{
+            box-sizing:border-box;
+        }
+
+        .header{
             text-align:center;
-            margin:0;
+            margin-bottom:20px;
         }
 
-        table{
+        .header h1{
+            margin:0;
+            font-size:14pt;
+            font-weight:bold;
+            text-transform:uppercase;
+        }
+
+        .header p{
+            margin-top:5px;
+            font-size:12pt;
+        }
+
+        .divider{
+            border-top:1.5px solid #000;
+            margin-bottom:20px;
+        }
+
+        .identitas{
+            width:100%;
+            margin-bottom:20px;
+        }
+
+        .identitas td{
+            border:none;
+            padding:2px 0;
+            vertical-align:top;
+        }
+
+        .label{
+            width:170px;
+        }
+
+        .laporan{
             width:100%;
             border-collapse:collapse;
             margin-top:10px;
         }
 
-        table, th, td{
+        .laporan th,
+        .laporan td{
             border:1px solid #000;
+            padding:8px;
+            vertical-align:top;
         }
 
-        th, td{
-            padding:6px;
-            
+        .laporan th{
+            text-align:center;
+            font-weight:bold;
         }
 
-        .identitas td{
+        .center{
+            text-align:center;
+        }
+
+        .judul-kegiatan{
+            font-weight:bold;
+            margin-bottom:3px;
+        }
+
+        .deskripsi-kegiatan{
+            text-align:justify;
+        }
+
+        .ttd{
+            width:100%;
+            margin-top:60px;
+        }
+
+        .ttd td{
             border:none;
-            padding:3px;
         }
 
-        .judul{
-            margin-bottom:20px;
+        .ttd-kanan{
+            text-align:center;
+            width:40%;
         }
+
+        .nama{
+            margin-top:80px;
+            font-weight:bold;
+            text-decoration:underline;
+        }
+
     </style>
+
 </head>
 <body>
 
@@ -46,119 +119,174 @@
     $profil = \App\Models\ProfilMagang::first();
 @endphp
 
-<div class="judul">
-    <h2>LAPORAN HARIAN MAGANG</h2>
-    <h3>
+<div class="header">
+
+    <h1>
+        Laporan Harian Magang
+    </h1>
+
+    <p>
+
         Tanggal :
-        {{ \Carbon\Carbon::parse($tanggal)->format('d F Y') }}
-    </h3>
+
+        {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}
+
+    </p>
+
 </div>
 
-<table class="identitas" style="border:none;">
+<div class="divider"></div>
+
+<table class="identitas">
+
     <tr>
-        <td width="100">Nama Mahasiswa</td>
-        <td>: {{ $profil->nama_mahasiswa ?? '-' }}</td>
+        <td class="label">Nama Mahasiswa</td>
+        <td width="10">:</td>
+        <td>{{ $profil->nama_mahasiswa ?? '-' }}</td>
     </tr>
 
     <tr>
-        <td>NIM</td>
-        <td>: {{ $profil->nim ?? '-' }}</td>
+        <td class="label">NIM</td>
+        <td>:</td>
+        <td>{{ $profil->nim ?? '-' }}</td>
     </tr>
 
     <tr>
-        <td>Program Studi</td>
-        <td>: {{ $profil->program_studi ?? '-' }}</td>
+        <td class="label">Program Studi</td>
+        <td>:</td>
+        <td>{{ $profil->program_studi ?? '-' }}</td>
     </tr>
 
     <tr>
-        <td>Universitas</td>
-        <td>: {{ $profil->universitas ?? '-' }}</td>
+        <td class="label">Universitas</td>
+        <td>:</td>
+        <td>{{ $profil->universitas ?? '-' }}</td>
     </tr>
 
     <tr>
-        <td>Instansi</td>
-        <td>: {{ $profil->perusahaan ?? '-' }}</td>
+        <td class="label">Perusahaan / Instansi</td>
+        <td>:</td>
+        <td>{{ $profil->perusahaan ?? '-' }}</td>
     </tr>
 
     <tr>
-        <td>Pembimbing Lapangan</td>
-        <td>: {{ $profil->pembimbing ?? '-' }}</td>
+        <td class="label">Pembimbing Lapangan</td>
+        <td>:</td>
+        <td>{{ $profil->pembimbing ?? '-' }}</td>
     </tr>
+
 </table>
 
-<table>
+<table class="laporan">
+
     <thead>
+
         <tr>
-            <th width="5%">No</th>
-            <th width="20%">Tanggal</th>
-            <th width="8%">Jam Mulai</th>
-            <th width="8%">Jam Selesai</th>
-            <th width="16%">Judul</th>
-            <th width="30%">Deskripsi</th>
-            <th width="13%">Status</th>
+
+            <th width="6%">
+                No
+            </th>
+
+            <th width="18%">
+                Jam
+            </th>
+
+            <th width="60%">
+                Kegiatan
+            </th>
+
+            <th width="16%">
+                Status
+            </th>
+
         </tr>
+
     </thead>
 
     <tbody>
 
-    @forelse($kegiatan as $item)
+        @forelse($kegiatan as $item)
+
         <tr>
-            <td align="center">{{ $loop->iteration }}</td>
 
-            <td>
-{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
-</td>
+            <td class="center">
+                {{ $loop->iteration }}
+            </td>
 
-            <td align="center">
+            <td class="center">
+
                 {{ date('H:i', strtotime($item->jam_mulai)) }}
-            </td>
-
-            <td align="center">
+                -
                 {{ date('H:i', strtotime($item->jam_selesai)) }}
-            </td>
 
-
-            <td>
-                {{ $item->judul_kegiatan }}
             </td>
 
             <td>
-                {{ $item->deskripsi_kegiatan }}
+
+                <div class="judul-kegiatan">
+
+                    {{ $item->judul_kegiatan }}
+
+                </div>
+
+                <div class="deskripsi-kegiatan">
+
+                    {{ $item->deskripsi_kegiatan }}
+
+                </div>
+
             </td>
 
-            <td>
+            <td class="center">
+
                 {{ $item->status }}
+
             </td>
+
         </tr>
-    @empty
+
+        @empty
+
         <tr>
-            <td colspan="7" align="center">
+
+            <td colspan="4" class="center">
+
                 Tidak ada data kegiatan
+
             </td>
+
         </tr>
-    @endforelse
+
+        @endforelse
 
     </tbody>
+
 </table>
 
-<br><br>
+<table class="ttd">
 
-<table style="border:none;">
-    <tr style="border:none;">
-        <td style="border:none; width:60%;"></td>
+    <tr>
 
-        <td style="border:none; text-align:center;">
+        <td width="60%"></td>
+
+        <td class="ttd-kanan">
+
             Mengetahui,
-
-            <br><br><br><br><br>
-
-            {{ $profil->pembimbing ?? '-' }}
 
             <br>
 
             Pembimbing Lapangan
+
+            <div class="nama">
+
+                {{ $profil->pembimbing ?? '-' }}
+
+            </div>
+
         </td>
+
     </tr>
+
 </table>
 
 </body>

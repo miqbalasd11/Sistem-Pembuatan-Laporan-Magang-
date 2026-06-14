@@ -2,141 +2,425 @@
 
 @section('content')
 
-<h2>Data Kegiatan Magang</h2>
+<style>
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:25px;
+}
 
-<a href="/kegiatan/create"
-   class="btn btn-primary mb-3">
+.page-title{
+    font-size:30px;
+    font-weight:700;
+    color:#1f2937;
+    margin:0;
+}
 
-    Tambah Kegiatan
+.page-subtitle{
+    color:#6b7280;
+    font-size:14px;
+}
 
-</a>
+.custom-card{
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+}
 
-<form method="GET"
-      class="row mb-3">
+.search-box{
+    background:#f8fafc;
+    padding:20px;
+    border-radius:15px;
+}
 
-    <div class="col-md-4">
+.table-modern th{
+    background:#f8fafc;
+    border:none;
+    font-weight:600;
+    color:#374151;
+}
 
-        <input
-            type="text"
-            name="judul"
-            class="form-control"
-            placeholder="Cari Judul"
-        >
+.table-modern td{
+    vertical-align:middle;
+    border-color:#eef2f7;
+}
+
+.badge-status{
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+}
+
+.mobile-card{
+    display:none;
+}
+
+.action-btn{
+    margin:2px;
+}
+
+.pagination{
+    justify-content:center;
+}
+
+@media(max-width:768px){
+
+    .page-title{
+        font-size:24px;
+    }
+
+    .desktop-table{
+        display:none;
+    }
+
+    .mobile-card{
+        display:block;
+    }
+
+    .mobile-item{
+        background:#fff;
+        border-radius:15px;
+        padding:15px;
+        margin-bottom:15px;
+        box-shadow:0 2px 10px rgba(0,0,0,.05);
+    }
+
+    .mobile-label{
+        font-size:12px;
+        color:#6b7280;
+        margin-bottom:3px;
+    }
+
+    .mobile-value{
+        font-weight:500;
+        margin-bottom:10px;
+    }
+
+    .btn-mobile{
+        width:100%;
+        margin-bottom:5px;
+    }
+}
+</style>
+
+<div class="container-fluid">
+
+    <!-- Header -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h2 class="page-title">
+                Data Kegiatan Magang
+            </h2>
+
+            <p class="page-subtitle">
+                Kelola seluruh aktivitas dan kegiatan magang
+            </p>
+
+        </div>
+
+        <a href="/kegiatan/create"
+           class="btn btn-primary">
+
+            + Tambah Kegiatan
+
+        </a>
 
     </div>
 
-    <div class="col-md-4">
+    <!-- Filter -->
 
-        <input
-            type="date"
-            name="tanggal"
-            class="form-control"
-        >
+    <div class="card custom-card shadow-sm mb-4">
 
-    </div>
+        <div class="card-body">
 
-    <div class="col-md-4">
+            <div class="search-box">
 
-        <button
-            class="btn btn-success">
+                <form method="GET">
 
-            Cari
+                    <div class="row g-3">
 
-        </button>
+                        <div class="col-md-5">
 
-    </div>
+                            <input
+                                type="text"
+                                name="judul"
+                                class="form-control"
+                                placeholder="Cari judul kegiatan..."
+                                value="{{ request('judul') }}"
+                            >
 
-</form>
+                        </div>
 
-<table class="table table-bordered">
+                        <div class="col-md-4">
 
-    <thead>
+                            <input
+                                type="date"
+                                name="tanggal"
+                                class="form-control"
+                                value="{{ request('tanggal') }}"
+                            >
 
-        <tr>
+                        </div>
 
-            <th>No</th>
-            <th>Tanggal</th>
-            <th>Judul</th>
-            <th>Status</th>
-            <th>Aksi</th>
+                        <div class="col-md-3 d-grid">
 
-        </tr>
+                            <button
+                                class="btn btn-success">
 
-    </thead>
+                                Cari Data
 
-    <tbody>
+                            </button>
 
-        @forelse($kegiatan as $item)
+                        </div>
 
-        <tr>
-
-            <td>{{ $loop->iteration }}</td>
-
-            <td>
-                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
-            </td>
-
-            <td>{{ $item->judul_kegiatan }}</td>
-
-            <td>{{ $item->status }}</td>
-
-            <td>
-
-                <a href="/kegiatan/{{ $item->id }}"
-                   class="btn btn-info btn-sm">
-
-                    Detail
-
-                </a>
-
-                <a href="/kegiatan/{{ $item->id }}/edit"
-                   class="btn btn-warning btn-sm">
-
-                    Edit
-
-                </a>
-
-                <form
-                    action="/kegiatan/{{ $item->id }}"
-                    method="POST"
-                    class="d-inline">
-
-                    @csrf
-                    @method('DELETE')
-
-                    <button
-                        onclick="return confirm('Hapus data?')"
-                        class="btn btn-danger btn-sm">
-
-                        Hapus
-
-                    </button>
+                    </div>
 
                 </form>
 
-            </td>
+            </div>
 
-        </tr>
+        </div>
+
+    </div>
+
+    <!-- Desktop Mode -->
+
+    <div class="card custom-card shadow-sm desktop-table">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-modern">
+
+                    <thead>
+
+                        <tr>
+
+                            <th width="70">No</th>
+                            <th>Tanggal</th>
+                            <th>Judul Kegiatan</th>
+                            <th>Status</th>
+                            <th width="220">Aksi</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($kegiatan as $item)
+
+                        <tr>
+
+                            <td>{{ $loop->iteration }}</td>
+
+                            <td>
+                                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+                            </td>
+
+                            <td>
+                                {{ $item->judul_kegiatan }}
+                            </td>
+
+                            <td>
+
+                                @if($item->status == 'Selesai')
+
+                                    <span class="badge bg-success badge-status">
+                                        Selesai
+                                    </span>
+
+                                @elseif($item->status == 'Proses')
+
+                                    <span class="badge bg-primary badge-status">
+                                        Proses
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-warning text-dark badge-status">
+                                        Pending
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                            <td>
+
+                                <a href="/kegiatan/{{ $item->id }}"
+                                   class="btn btn-info btn-sm action-btn">
+
+                                    Detail
+
+                                </a>
+
+                                <a href="/kegiatan/{{ $item->id }}/edit"
+                                   class="btn btn-warning btn-sm action-btn">
+
+                                    Edit
+
+                                </a>
+
+                                <form
+                                    action="/kegiatan/{{ $item->id }}"
+                                    method="POST"
+                                    class="d-inline">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        onclick="return confirm('Hapus data ini?')"
+                                        class="btn btn-danger btn-sm action-btn">
+
+                                        Hapus
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center py-4">
+
+                                Belum ada data kegiatan
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Mobile Mode -->
+
+    <div class="mobile-card">
+
+        @forelse($kegiatan as $item)
+
+        <div class="mobile-item">
+
+            <div class="mobile-label">
+                Tanggal
+            </div>
+
+            <div class="mobile-value">
+                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+            </div>
+
+            <div class="mobile-label">
+                Judul Kegiatan
+            </div>
+
+            <div class="mobile-value">
+                {{ $item->judul_kegiatan }}
+            </div>
+
+            <div class="mobile-label">
+                Status
+            </div>
+
+            <div class="mb-3">
+
+                @if($item->status == 'Selesai')
+
+                    <span class="badge bg-success">
+                        Selesai
+                    </span>
+
+                @elseif($item->status == 'Proses')
+
+                    <span class="badge bg-primary">
+                        Proses
+                    </span>
+
+                @else
+
+                    <span class="badge bg-warning text-dark">
+                        Pending
+                    </span>
+
+                @endif
+
+            </div>
+
+            <a href="/kegiatan/{{ $item->id }}"
+               class="btn btn-info btn-mobile">
+
+                Detail
+
+            </a>
+
+            <a href="/kegiatan/{{ $item->id }}/edit"
+               class="btn btn-warning btn-mobile">
+
+                Edit
+
+            </a>
+
+            <form
+                action="/kegiatan/{{ $item->id }}"
+                method="POST">
+
+                @csrf
+                @method('DELETE')
+
+                <button
+                    onclick="return confirm('Hapus data ini?')"
+                    class="btn btn-danger btn-mobile">
+
+                    Hapus
+
+                </button>
+
+            </form>
+
+        </div>
 
         @empty
 
-        <tr>
+        <div class="alert alert-secondary">
 
-            <td colspan="5"
-                class="text-center">
+            Belum ada data kegiatan.
 
-                Belum ada data
-
-            </td>
-
-        </tr>
+        </div>
 
         @endforelse
 
-    </tbody>
+    </div>
 
-</table>
+    <!-- Pagination -->
 
-{{ $kegiatan->links() }}
+    <div class="mt-4">
+
+        {{ $kegiatan->links() }}
+
+    </div>
+
+</div>
 
 @endsection

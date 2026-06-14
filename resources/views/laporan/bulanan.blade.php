@@ -2,111 +2,411 @@
 
 @section('content')
 
-<h2 class="mb-4">
-    Laporan Bulanan
-</h2>
+<style>
+.page-header{
+    margin-bottom:25px;
+}
 
-<div class="card mb-4">
+.page-title{
+    font-size:30px;
+    font-weight:700;
+    color:#1f2937;
+    margin-bottom:5px;
+}
 
-<div class="card-body">
+.page-subtitle{
+    color:#6b7280;
+    font-size:14px;
+}
 
-<form method="GET">
+.custom-card{
+    border:none;
+    border-radius:20px;
+    overflow:hidden;
+}
 
-<div class="row">
+.custom-card .card-body{
+    padding:25px;
+}
 
-<div class="col-md-4">
+.filter-box{
+    background:#f8fafc;
+    padding:20px;
+    border-radius:15px;
+}
 
-<label>Bulan</label>
+.table-modern th{
+    background:#f8fafc;
+    border:none;
+    color:#374151;
+    font-weight:600;
+}
 
-<input
-type="month"
-name="bulan"
-class="form-control"
-value="{{ request('bulan') }}">
+.table-modern td{
+    vertical-align:middle;
+    border-color:#eef2f7;
+}
 
-</div>
+.report-header{
+    background:#f8fafc;
+    padding:15px 20px;
+    font-weight:600;
+    color:#111827;
+}
 
-<div class="col-md-4 mt-4">
+.mobile-report{
+    display:none;
+}
 
-<button
-class="btn btn-primary">
+.badge-status{
+    padding:8px 12px;
+    border-radius:10px;
+    font-size:12px;
+}
 
-Tampilkan
+@media(max-width:768px){
 
-</button>
+    .page-title{
+        font-size:24px;
+    }
 
-</div>
+    .desktop-table{
+        display:none;
+    }
 
-</div>
+    .mobile-report{
+        display:block;
+    }
 
-</form>
+    .mobile-item{
+        background:#fff;
+        border-radius:15px;
+        padding:15px;
+        margin-bottom:15px;
+        box-shadow:0 2px 10px rgba(0,0,0,.05);
+    }
 
-</div>
+    .mobile-label{
+        font-size:12px;
+        color:#6b7280;
+        margin-bottom:4px;
+    }
 
-</div>
+    .mobile-value{
+        font-size:14px;
+        font-weight:500;
+        margin-bottom:12px;
+    }
 
-@if($bulan)
+    .btn{
+        width:100%;
+    }
+}
+</style>
 
-<a href="/laporan/bulanan/pdf?bulan={{ $bulan }}"
-class="btn btn-danger mb-3">
+<div class="container-fluid">
 
-Cetak PDF
+    <!-- Header -->
 
-</a>
+    <div class="page-header">
 
-<table class="table table-bordered">
+        <h2 class="page-title">
+            Laporan Bulanan
+        </h2>
 
-<thead>
+        <p class="page-subtitle">
+            Laporan kegiatan magang berdasarkan bulan
+        </p>
 
-<tr align="center">
-<th>Tanggal</th>
-<th>Jam</th>
-<th>Kegiatan</th>
-<th>Status</th>
-</tr>
+    </div>
 
-</thead>
+    <!-- Filter -->
 
-<tbody>
+    <div class="card custom-card shadow-sm mb-4">
 
-@foreach($kegiatan as $item)
+        <div class="card-body">
 
-<tr>
+            <div class="filter-box">
 
-<td>
-{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
-</td>
+                <form method="GET">
 
-                      <td align="center">
+                    <div class="row g-3 align-items-end">
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Pilih Bulan
+                            </label>
+
+                            <input
+                                type="month"
+                                name="bulan"
+                                class="form-control"
+                                value="{{ request('bulan') }}">
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            <button
+                                class="btn btn-primary">
+
+                                Tampilkan Laporan
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @if($bulan)
+
+    <!-- Tombol PDF -->
+
+    <div class="mb-4">
+
+        <a href="/laporan/bulanan/pdf?bulan={{ $bulan }}"
+           class="btn btn-danger">
+
+            Cetak PDF
+
+        </a>
+
+    </div>
+
+    <!-- Hasil Laporan -->
+
+    <div class="card custom-card shadow-sm">
+
+        <div class="report-header">
+
+            Bulan :
+
+            {{ \Carbon\Carbon::parse($bulan.'-01')->translatedFormat('F Y') }}
+
+        </div>
+
+        <div class="card-body">
+
+            <!-- Desktop -->
+
+            <div class="table-responsive desktop-table">
+
+                <table class="table table-modern">
+
+                    <thead>
+
+                        <tr>
+
+                            <th width="170">
+                                Tanggal
+                            </th>
+
+                            <th width="150">
+                                Jam
+                            </th>
+
+                            <th>
+                                Kegiatan
+                            </th>
+
+                            <th width="150">
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($kegiatan as $item)
+
+                        <tr>
+
+                            <td>
+
+                                {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+
+                            </td>
+
+                            <td>
+
+                                {{ date('H:i', strtotime($item->jam_mulai)) }}
+                                -
+                                {{ date('H:i', strtotime($item->jam_selesai)) }}
+
+                            </td>
+
+                            <td>
+
+                                <strong>
+                                    {{ $item->judul_kegiatan }}
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+
+                                    {{ $item->deskripsi_kegiatan }}
+
+                                </small>
+
+                            </td>
+
+                            <td>
+
+                                @if($item->status == 'Selesai')
+
+                                    <span class="badge bg-success badge-status">
+                                        Selesai
+                                    </span>
+
+                                @elseif($item->status == 'Sedang Dikerjakan')
+
+                                    <span class="badge bg-primary badge-status">
+                                        Sedang Dikerjakan
+                                    </span>
+
+                                @else
+
+                                    <span class="badge bg-warning text-dark badge-status">
+                                        Belum Selesai
+                                    </span>
+
+                                @endif
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="text-center py-4">
+
+                                Tidak ada kegiatan pada bulan ini
+
+                            </td>
+
+                        </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- Mobile -->
+
+            <div class="mobile-report">
+
+                @forelse($kegiatan as $item)
+
+                <div class="mobile-item">
+
+                    <div class="mobile-label">
+                        Tanggal
+                    </div>
+
+                    <div class="mobile-value">
+
+                        {{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('d F Y') }}
+
+                    </div>
+
+                    <div class="mobile-label">
+                        Waktu
+                    </div>
+
+                    <div class="mobile-value">
+
                         {{ date('H:i', strtotime($item->jam_mulai)) }}
                         -
                         {{ date('H:i', strtotime($item->jam_selesai)) }}
-                    </td>
 
-<td>
+                    </div>
 
-<strong>
-{{ $item->judul_kegiatan }}
-</strong>
+                    <div class="mobile-label">
+                        Judul Kegiatan
+                    </div>
 
-<br>
+                    <div class="mobile-value">
 
-{{ $item->deskripsi_kegiatan }}
+                        {{ $item->judul_kegiatan }}
 
-</td>
+                    </div>
 
-<td>
-{{ $item->status }}
-</td>
+                    <div class="mobile-label">
+                        Deskripsi
+                    </div>
 
-</tr>
+                    <div class="mobile-value">
 
-@endforeach
+                        {{ $item->deskripsi_kegiatan }}
 
-</tbody>
+                    </div>
 
-</table>
+                    <div class="mobile-label">
+                        Status
+                    </div>
 
-@endif
+                    <div>
+
+                        @if($item->status == 'Selesai')
+
+                            <span class="badge bg-success">
+                                Selesai
+                            </span>
+
+                        @elseif($item->status == 'Sedang Dikerjakan')
+
+                            <span class="badge bg-primary">
+                                Sedang Dikerjakan
+                            </span>
+
+                        @else
+
+                            <span class="badge bg-warning text-dark">
+                                Belum Selesai
+                            </span>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+                @empty
+
+                <div class="alert alert-secondary">
+
+                    Tidak ada kegiatan pada bulan ini.
+
+                </div>
+
+                @endforelse
+
+            </div>
+
+        </div>
+
+    </div>
+
+    @endif
+
+</div>
 
 @endsection
